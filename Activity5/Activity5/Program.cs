@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 namespace Activity5
 {
+
+
+
     class Program
     {
         private static readonly HttpClient client = new HttpClient();
@@ -21,7 +24,7 @@ namespace Activity5
             {
                 try
                 {
-                    Console.WriteLine("Enter a pokemon Name. Enter nothing to stop");
+                    Console.WriteLine("Enter anything to generate a random user! Enter nothing to stop.");
 
                     var name = Console.ReadLine();
 
@@ -30,31 +33,46 @@ namespace Activity5
                         break;
                     }
 
-                    var result = await client.GetAsync("https://pokeapi.co/api/v2/pokemon/" + name.ToLower());
+                    var result = await client.GetAsync("https://randomuser.me/api?gender=");
                     var resultRead = await result.Content.ReadAsStringAsync();
 
-                    var pokemon = JsonConvert.DeserializeObject<Pokemon>(resultRead);
+                    var books = JsonConvert.DeserializeObject<Result>(resultRead);
 
-                    Console.WriteLine("Pokemon Name: " + pokemon.Name);
-                    Console.WriteLine("Pokemon Id: " + pokemon.Id);
+                    foreach(var i in books.Results)
+                    {
+                        Console.WriteLine("New user information ------");
+                        Console.WriteLine("Gender: " + i.Gender);
+                        Console.WriteLine("Email: " + i.Email);
+                        Console.WriteLine("Cell: " + i.Cell);
+                        Console.WriteLine("\n\n");
+                    }
+                    
                 }
                 catch(Exception)
                 {
-                    Console.WriteLine("ERROR");
+                    Console.WriteLine("Invalid input.");
                 }
             }
         }
     }
 
-    class Pokemon
+    class Result
     {
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        [JsonProperty("results")]
+        public List<Person> Results { get; set; }
+    }
 
-        [JsonProperty("id")]
-        public string Id { get; set; }
 
-        
+    class Person
+    {
+        [JsonProperty("gender")]
+        public string Gender { get; set; }
+
+        [JsonProperty("email")]
+        public string Email { get; set; }
+
+        [JsonProperty("cell")]
+        public string Cell { get; set; }
 
     }
 }
